@@ -1,0 +1,45 @@
+window_title: "TARGET_GAME_WINDOW"
+capture:
+  monitor: 0
+  crop_to_window: true
+  target_fps: 6
+  dry_run: true
+
+maps:
+  TARGET_MAP:
+    thresholds:
+      - max: 10000
+        loadout: budget
+      - min: 10001
+        max: 50000
+        loadout: standard
+      - min: 50001
+        loadout: high
+
+loadouts:
+  budget:
+    weapon: TARGET_WEAPON_1
+    armor: TARGET_ARMOR_1
+    helmet: TARGET_HELMET_1
+    meds: [TARGET_MED_1]
+  standard:
+    weapon: TARGET_WEAPON_2
+    armor: TARGET_ARMOR_2
+    helmet: TARGET_HELMET_2
+    meds: [TARGET_MED_1, TARGET_MED_2]
+  high:
+    weapon: TARGET_WEAPON_3
+    armor: TARGET_ARMOR_3
+    helmet: TARGET_HELMET_3
+    meds: [TARGET_MED_2]
+
+drop_items:
+  - name: TARGET_ITEM
+    count: 1
+
+templates:
+  lobby: assets/templates/lobby.png
+  map_selection: assets/templates/map_selection.png
+  loadout: assets/templates/loadout.png
+  in_match: assets/templates/in_match.png
+  backpack: assets/templates/backpack.png
