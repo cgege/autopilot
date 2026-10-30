@@ -2,21 +2,41 @@ window_title: "TARGET_GAME_WINDOW"
 capture:
   monitor: 0
   crop_to_window: true
+  screen_width: 2560
+  screen_height: 1440
+  windows_scale_percent: 100
   target_fps: 6
   dry_run: true
 
-maps:
-  TARGET_MAP:
-    thresholds:
-      - max: 10000
-        loadout: budget
-      - min: 10001
-        max: 50000
-        loadout: standard
-      - min: 50001
-        loadout: high
+workflow:
+  auto_select_map: false
+  wait_for_teammate_map: true
+  wait_timeout_seconds: 180
+  verify_each_action: true
+
+modes:
+  机密:
+    minimum_equipment_value: 190000
+    loadout: confidential
+  绝密:
+    minimum_equipment_value: 600000
+    loadout: classified
 
 loadouts:
+  confidential:
+    minimum_value: 190000
+    backpack: GT5野战背包
+    weapon: TARGET_WEAPON_CONFIDENTIAL
+    armor: TARGET_ARMOR_CONFIDENTIAL
+    helmet: TARGET_HELMET_CONFIDENTIAL
+    meds: [TARGET_MED_1, TARGET_MED_2]
+  classified:
+    minimum_value: 600000
+    backpack: 重型登山包
+    weapon: TARGET_WEAPON_CLASSIFIED
+    armor: TARGET_ARMOR_CLASSIFIED
+    helmet: TARGET_HELMET_CLASSIFIED
+    meds: [TARGET_MED_2, TARGET_MED_3]
   budget:
     weapon: TARGET_WEAPON_1
     armor: TARGET_ARMOR_1
@@ -36,6 +56,8 @@ loadouts:
 drop_items:
   - name: TARGET_ITEM
     count: 1
+    action: drop
+post_drop_action: TARGET_POST_DROP_ACTION
 
 templates:
   lobby: assets/templates/lobby.png
@@ -43,3 +65,36 @@ templates:
   loadout: assets/templates/loadout.png
   in_match: assets/templates/in_match.png
   backpack: assets/templates/backpack.png
+
+ui_anchors:
+  loadout_backpack_slot:
+    # Approximate center at 2560x1440; confirm with a cropped template before live input.
+    x: 270
+    y: 910
+    width: 430
+    height: 110
+    label: 背包
+  backpack_list:
+    # Scrollable list on the left side of the backpack selection screen.
+    x: 90
+    y: 150
+    width: 480
+    height: 1120
+  backpack_purchase_button:
+    # Price/purchase button on the lower-right side after an item is selected.
+    x: 2040
+    y: 1190
+    width: 430
+    height: 100
+  confirm_loadout_button:
+    x: 2040
+    y: 1210
+    width: 430
+    height: 110
+    label: 确认配装
+  entry_warning_continue_button:
+    x: 1060
+    y: 880
+    width: 440
+    height: 120
+    label: 仍要继续

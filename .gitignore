@@ -5,3 +5,6 @@ __pycache__/
 logs/*.png
 logs/*.jsonl
 screenshots/
+build/
+dist/
+*.spec

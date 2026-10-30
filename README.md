@@ -4,7 +4,7 @@ PC-only automation framework based on visible screen capture and keyboard/mouse 
 
 ## Objective
 
-Detect the selected map and entry threshold, choose a configured loadout, equip it through the visible UI, start the match, then locate and drop configured items.
+Wait for the teammate to select a mode, detect `机密` or `绝密`, choose a configured loadout, equip it through the visible UI, start the match, then locate and drop the configured skill item and run the configured post-drop action. The map name is logged but does not affect the loadout decision.
 
 ## Project layout
 
@@ -21,12 +21,13 @@ delta_pc_automation/
 │  └─ main.py
 ├─ tests/test_config.py
 ├─ requirements.txt
+├─ build.ps1
 └─ pyproject.toml
 ```
 
 ## Initial setup
 
-Use a fixed first-pass environment: Windows 10/11, 1920x1080, Windows display scale 100%, borderless window mode.
+Use a fixed first-pass environment: Windows 10/11, 2560x1440, Windows display scale 100%, borderless window mode.
 
 ```powershell
 py -3.11 -m venv .venv
@@ -41,10 +42,42 @@ python -m delta_bot.main --dry-run
 ## Implementation plan
 
 1. Capture and crop the game window using `dxcam`; fall back to `mss`.
-2. Add screenshots/templates for lobby, map selection, loadout, loading, HUD, and backpack states.
+2. Add screenshots/templates for lobby, teammate-selected map, loadout, loading, HUD, backpack, and skill-item states.
 3. Connect OCR for map names and threshold values.
 4. Populate `config/loadouts.yaml` with real item labels and threshold rules.
 5. Enable visible UI input only after state detection and verification work in dry-run mode.
 6. Add per-state screenshots, timeout/retry handling, and a global emergency stop key.
 
-The first milestone is map/threshold detection. Game-specific coordinates and templates remain configuration data rather than hard-coded code.
+The first milestone is mode detection after the teammate completes map selection. The bot does not click or change the map selection. Game-specific coordinates and templates remain configuration data rather than hard-coded code.
+
+Current entry requirements in the sample configuration:
+
+| Detected mode | Minimum equipment value | Loadout |
+|---|---:|---|
+| 零号大坝-机密 | 190000 | confidential |
+| 航天基地-绝密 | 600000 | classified |
+
+The workflow should verify the prepared equipment value before pressing the start button.
+
+The provided loadout screenshot confirms a clickable `背包 / 未装配` slot on the left side. The initial anchor is recorded in `config/loadouts.yaml` as an approximate rectangle for 2560x1440; live input should first verify the text/icon template inside that rectangle.
+
+Backpack selection rules from the supplied screenshots:
+
+| Mode | Backpack | Flow |
+|---|---|---|
+| 机密 | GT5野战背包 | Scroll the left list to the bottom, select the row, verify the name, click the current lower-right purchase/exchange control |
+| 绝密 | 重型登山包 | Scroll the left list to the bottom, select the row, verify the name, click the current lower-right purchase/exchange control |
+
+Backpack price is dynamic and is intentionally ignored. The purchase control is clicked only after the selected-item name matches the configured rule, then the resulting equipped slot is verified.
+
+After purchase, the workflow expects the equipped loadout screen (`确认配装`) and then the entry warning dialog (`仍要继续`). Both controls have dedicated 2560x1440 anchor rectangles and must be visually confirmed before clicking.
+
+## EXE product form
+
+The desktop entry point is `src/delta_bot/app.py`. It provides Start, Stop, status, and log output while the worker runs in a background thread. Build a single-window executable with:
+
+```powershell
+.\build.ps1
+```
+
+The output is `dist\DeltaScreenBot.exe`. The initial build remains dry-run until real screenshots/templates and verified click points are configured.
