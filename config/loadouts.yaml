@@ -15,6 +15,13 @@ workflow:
   verify_each_action: true
   backpack_scroll_rounds: 6
   backpack_scroll_notches: 12
+  entry_warning_timeout_seconds: 180
+  in_match_timeout_seconds: 180
+  inventory_timeout_seconds: 10
+  in_match_settle_seconds: 3
+  backward_hold_seconds: 2
+  look_down_pixels: 700
+  look_down_seconds: 0.8
 
 modes:
   机密:
@@ -72,6 +79,13 @@ ui_anchors:
   lobby_loadout_button:
     x: 2070
     y: 1290
+  lobby_depart_button:
+    x: 2320
+    y: 1290
+  inventory_target_confidential:
+    # Center of the GT5野战背包 tile in the in-match inventory screenshot.
+    x: 1075
+    y: 710
   backpack_target_confidential:
     x: 320
     y: 1050

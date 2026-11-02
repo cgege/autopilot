@@ -195,6 +195,9 @@ class NativeApp:
                 InputController(dry_run=False),
                 status=lambda message: self.set_status(f"状态：{message}"),
                 stop_event=self.stop_event,
+                entry_warning_template=bundled_path("imgtest/9.png"),
+                in_match_template=bundled_path("imgtest/11.jpg"),
+                inventory_template=bundled_path("imgtest/12.jpg"),
             ).run(mode)
         except InterruptedError:
             self.set_status("状态：已停止")
