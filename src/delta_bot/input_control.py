@@ -46,3 +46,11 @@ class InputController:
             return
         ctypes.windll.user32.keybd_event(virtual_key, 0, 0, 0)
         ctypes.windll.user32.keybd_event(virtual_key, 0, 2, 0)
+
+    def scroll(self, clicks: int, point: Point | None = None) -> None:
+        """Scroll the visible window; positive values move up, negative down."""
+        if point is not None:
+            self.move(point, duration=0.02)
+        LOGGER.info("scroll clicks=%s dry_run=%s", clicks, self.dry_run)
+        if not self.dry_run:
+            ctypes.windll.user32.mouse_event(0x0800, 0, 0, int(clicks) * 120, 0)

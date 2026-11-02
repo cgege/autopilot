@@ -6,13 +6,15 @@ capture:
   screen_height: 1440
   windows_scale_percent: 100
   target_fps: 6
-  dry_run: true
+  dry_run: false
 
 workflow:
   auto_select_map: false
   wait_for_teammate_map: true
   wait_timeout_seconds: 180
   verify_each_action: true
+  backpack_scroll_rounds: 6
+  backpack_scroll_notches: 12
 
 modes:
   机密:
@@ -67,12 +69,18 @@ templates:
   backpack: assets/templates/backpack.png
 
 ui_anchors:
+  lobby_loadout_button:
+    x: 2070
+    y: 1290
+  backpack_target_confidential:
+    x: 320
+    y: 1050
+  backpack_target_classified:
+    x: 320
+    y: 1210
   loadout_backpack_slot:
-    # Approximate center at 2560x1440; confirm with a cropped template before live input.
-    x: 270
+    x: 320
     y: 910
-    width: 430
-    height: 110
     label: 背包
   backpack_list:
     # Scrollable list on the left side of the backpack selection screen.
@@ -80,12 +88,14 @@ ui_anchors:
     y: 150
     width: 480
     height: 1120
-  backpack_purchase_button:
-    # Price/purchase button on the lower-right side after an item is selected.
-    x: 2040
-    y: 1190
-    width: 430
-    height: 100
+  backpack_purchase_confidential:
+    # GT5野战背包: click the price/purchase panel above the 兑换 control.
+    x: 2250
+    y: 1145
+  backpack_purchase_classified:
+    # 重型登山包: the purchase/price control occupies the lower-right panel.
+    x: 2250
+    y: 1240
   confirm_loadout_button:
     x: 2040
     y: 1210

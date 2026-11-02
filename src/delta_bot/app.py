@@ -41,10 +41,8 @@ class BotApp(tk.Tk):
 
         buttons = ttk.Frame(form)
         buttons.grid(row=2, column=0, columnspan=2, sticky="w", pady=14)
-        self.start_button = ttk.Button(buttons, text="开始", command=self.start)
-        self.start_button.pack(side="left")
-        self.stop_button = ttk.Button(buttons, text="停止", command=self.stop, state="disabled")
-        self.stop_button.pack(side="left", padx=8)
+        self.toggle_button = ttk.Button(buttons, text="开始", command=self.toggle_run)
+        self.toggle_button.pack(side="left")
         self.status_var = tk.StringVar(value="就绪（默认 dry-run）")
         ttk.Label(form, textvariable=self.status_var).grid(row=3, column=0, columnspan=2, sticky="w")
         self.log = tk.Text(form, height=12, width=64, state="disabled")
@@ -55,18 +53,26 @@ class BotApp(tk.Tk):
     def write(self, message: str) -> None:
         self.messages.put(message)
 
+    def toggle_run(self) -> None:
+        if self.worker and self.worker.is_alive():
+            self.stop()
+        else:
+            self.start()
+
     def start(self) -> None:
         if self.worker and self.worker.is_alive():
             return
         self.stop_event.clear()
-        self.start_button.configure(state="disabled")
-        self.stop_button.configure(state="normal")
+        self.toggle_button.configure(text="停止", state="normal")
         self.status_var.set("运行中")
         self.worker = threading.Thread(target=self.run_worker, daemon=True)
         self.worker.start()
 
     def stop(self) -> None:
+        if not self.worker or not self.worker.is_alive():
+            return
         self.stop_event.set()
+        self.toggle_button.configure(text="停止中", state="disabled")
         self.status_var.set("正在停止")
         self.write("收到停止请求；后续动作将在当前步骤结束后停止。")
 
@@ -87,8 +93,7 @@ class BotApp(tk.Tk):
             self.after(0, self.worker_finished)
 
     def worker_finished(self) -> None:
-        self.start_button.configure(state="normal")
-        self.stop_button.configure(state="disabled")
+        self.toggle_button.configure(text="开始", state="normal")
         if self.status_var.get() != "正在停止":
             self.status_var.set("已完成")
         else:

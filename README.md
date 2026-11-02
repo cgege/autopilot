@@ -37,7 +37,7 @@ $env:PYTHONPATH = "src"
 python -m delta_bot.main --dry-run
 ```
 
-`--dry-run` captures and logs detected states without sending input. Set `window_title` in `config/loadouts.yaml` after confirming the exact game window title.
+The CLI remains available for plan-only checks; use `--live` when invoking it directly. The desktop EXE uses the visible-input flow described below. Set `window_title` in `config/loadouts.yaml` after confirming the exact game window title.
 
 ## Implementation plan
 
@@ -45,7 +45,7 @@ python -m delta_bot.main --dry-run
 2. Add screenshots/templates for lobby, teammate-selected map, loadout, loading, HUD, backpack, and skill-item states.
 3. Connect OCR for map names and threshold values.
 4. Populate `config/loadouts.yaml` with real item labels and threshold rules.
-5. Enable visible UI input only after state detection and verification work in dry-run mode.
+5. Keep visible UI input behind the combined Start/Stop control and verify each action before expanding the flow.
 6. Add per-state screenshots, timeout/retry handling, and a global emergency stop key.
 
 The first milestone is mode detection after the teammate completes map selection. The bot does not click or change the map selection. Game-specific coordinates and templates remain configuration data rather than hard-coded code.
@@ -74,10 +74,10 @@ After purchase, the workflow expects the equipped loadout screen (`确认配装`
 
 ## EXE product form
 
-The desktop entry point is `src/delta_bot/app.py`. It provides Start, Stop, status, and log output while the worker runs in a background thread. Build a single-window executable with:
+The desktop entry point is `src/delta_bot/app.py`. It provides a combined Start/Stop toggle, status, and log output while the worker runs in a background thread. Build a single-window executable with:
 
 ```powershell
 .\build.ps1
 ```
 
-The output is `dist\DeltaScreenBot.exe`. The initial build remains dry-run until real screenshots/templates and verified click points are configured.
+The output is `dist\DeltaScreenBot.exe`. The current live flow uses the supplied 2560x1440 screenshots and configured anchors to drive the lobby -> 配装 -> 背包 -> 购买/兑换 -> 确认配装 -> 仍要继续 sequence. The backpack list is scrolled in repeated rounds; GT5野战背包 clicks the price/purchase panel above `兑换`, while 重型登山包 uses its separate purchase panel. Keep the game at 2560x1440 and 100% Windows scaling, then click `自动识别开始` or choose `机密`/`绝密`. The single `开始`/`停止` button requests a cooperative stop.

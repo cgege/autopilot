@@ -8,5 +8,6 @@ if (!(Test-Path $python)) {
   --name DeltaScreenBot `
   --paths src `
   --add-data "config;config" `
+  --add-data "imgtest;imgtest" `
   launcher.py
 Write-Host "Built dist\DeltaScreenBot.exe"
